@@ -110,6 +110,7 @@ services:
     environment:
       - APP_NAME=uber_clone
     entrypoint: start-container
+    command: sh -c 'caddy run --config /etc/caddy/Caddyfile --adapter caddyfile'
     networks:
       - uber_clone
       - caddy_network
