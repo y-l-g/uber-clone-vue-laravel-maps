@@ -41,7 +41,7 @@ services:
   # OCTANE:FRANKENPHP
   #################################################
   app:
-    image: ghcr.io/y-l-g/uber-clone-vue-laravel-maps-back:main
+    image: ghcr.io/y-l-g/uber-clone-vue-laravel-map-back:main
     volumes:
       - uber_clone_app_data:/data
       - uber_clone_app_config:/config
@@ -70,7 +70,7 @@ services:
   # REVERB
   ##################################################
   reverb:
-    image: ghcr.io/y-l-g/uber-clone-vue-laravel-maps-back:main
+    image: ghcr.io/y-l-g/uber-clone-vue-laravel-map-back:main
     volumes:
       - uber_clone_reverb_data:/data
       - uber_clone_reverb_config:/config
@@ -99,7 +99,7 @@ services:
   # Frontend
   ##################################################
   frontend:
-    image: ghcr.io/y-l-g/uber-clone-vue-laravel-maps-front:main
+    image: ghcr.io/y-l-g/uber-clone-vue-laravel-map-front:main
     volumes:
       - uber_clone_frontend_data:/data
       - uber_clone_frontend_config:/config
