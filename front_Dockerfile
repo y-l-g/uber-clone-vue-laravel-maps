@@ -1,9 +1,5 @@
 FROM caddy:2.9
 
-ARG USER=youenn
-
-RUN useradd ${USER}
-
 RUN set -eux; \
     apt-get update \
     && apt-get install -y --no-install-recommends\
@@ -13,7 +9,7 @@ RUN set -eux; \
 
 WORKDIR /app
 
-COPY --link --chown=${USER}:${USER} --chmod=755 front_start_container.sh /usr/local/bin/start-container
+COPY --link --chmod=755 front_start_container.sh /usr/local/bin/start-container
 
 COPY --link front_Caddyfile /etc/caddy/Caddyfile
 
@@ -22,12 +18,3 @@ COPY --link front/package*.json ./
 RUN npm install
 
 COPY front/. .
-
-RUN chmod -R 775 /data
-RUN chmod -R 775 /config
-
-RUN chown -R ${USER}:${USER} /app
-RUN chown -R ${USER}:${USER} /data
-RUN chown -R ${USER}:${USER} /config
-
-USER ${USER}
