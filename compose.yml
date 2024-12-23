@@ -86,6 +86,9 @@ services:
       - uber_clone_REVERB_APP_KEY
       - uber_clone_REVERB_APP_ID
       - uber_clone_APP_DOMAIN
+      - uber_clone_TWILIO_DEBUG_TO
+      - uber_clone_TWILIO_AUTH_TOKEN
+      - uber_clone_TWILIO_ACCOUNT_SID
     entrypoint: start-container
     environment:
       - APP_NAME=uber_clone
@@ -107,6 +110,7 @@ services:
       - uber_clone_APP_URL
       - uber_clone_REVERB_APP_KEY
       - uber_clone_APP_DOMAIN
+      - uber_clone_VITE_APP_GOOGLE_MAPS_API_KEY
     environment:
       - APP_NAME=uber_clone
     entrypoint: start-container
@@ -149,6 +153,14 @@ secrets:
   uber_clone_REVERB_APP_ID:
     external: true
   uber_clone_APP_DOMAIN:
+    external: true
+  uber_clone_TWILIO_DEBUG_TO:
+    external: true
+  uber_clone_TWILIO_AUTH_TOKEN:
+    external: true
+  uber_clone_TWILIO_ACCOUNT_SID:
+    external: true
+  uber_clone_VITE_APP_GOOGLE_MAPS_API_KEY:
     external: true
 networks:
   uber_clone:
