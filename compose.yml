@@ -1,0 +1,140 @@
+services:
+  #################################################
+  # DB (MySQL)
+  #################################################
+  db:
+    image: "mysql:8.0"
+    volumes:
+      - uber_clone_back_mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE_FILE: /run/secrets/uber_clone_back_DB_DATABASE
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/uber_clone_back_DB_PASSWORD
+      MYSQL_PASSWORD_FILE: /run/secrets/uber_clone_back_DB_PASSWORD
+      MYSQL_USER_FILE: /run/secrets/uber_clone_back_DB_USERNAME
+    secrets:
+      - uber_clone_back_DB_DATABASE
+      - uber_clone_back_DB_PASSWORD
+      - uber_clone_back_DB_USERNAME
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      start_period: 20s
+    networks:
+      - uber_clone_back
+  ##################################################
+  # REDIS
+  ##################################################
+  redis:
+    image: "redis:7.4"
+    volumes:
+      - "uber_clone_back_redis_data:/data"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 20s
+    environment:
+      - REDIS_PASSWORD_FILE=/run/secrets/uber_clone_back_REDIS_PASSWORD
+    secrets:
+      - uber_clone_back_REDIS_PASSWORD
+    command: sh -c 'redis-server --appendonly yes --requirepass $$(cat /run/secrets/uber_clone_back_REDIS_PASSWORD | tr -d " \t\n\r")'
+    networks:
+      - uber_clone_back
+  #################################################
+  # OCTANE:FRANKENPHP
+  #################################################
+  app:
+    image: ghcr.io/y-l-g/chat-laravel-inertia-primevue:main
+    volumes:
+      - uber_clone_back_app_data:/data
+      - uber_clone_back_app_config:/config
+    healthcheck:
+      test: ["CMD", "php", "artisan", "octane:status"]
+      start_period: 20s
+    command: sh -c 'php artisan octane:frankenphp --host=0.0.0.0'
+    environment:
+      - APP_NAME=uber_clone_back
+    secrets:
+      - uber_clone_back_DB_DATABASE
+      - uber_clone_back_DB_PASSWORD
+      - uber_clone_back_DB_USERNAME
+      - uber_clone_back_REDIS_PASSWORD
+      - uber_clone_back_APP_URL
+      - uber_clone_back_APP_KEY
+      - uber_clone_back_REVERB_APP_SECRET
+      - uber_clone_back_REVERB_APP_KEY
+      - uber_clone_back_REVERB_APP_ID
+      - uber_clone_back_APP_DOMAIN
+    entrypoint: start-container
+    networks:
+      - uber_clone_back
+      - caddy_network
+    ##################################################
+  # REVERB
+  ##################################################
+  reverb:
+    image: ghcr.io/y-l-g/chat-laravel-inertia-primevue:main
+    restart: always
+    volumes:
+      - uber_clone_back_reverb_data:/data
+      - uber_clone_back_reverb_config:/config
+    command: ["php", "artisan", "reverb:start", "--debug"]
+    secrets:
+      - uber_clone_back_DB_DATABASE
+      - uber_clone_back_DB_PASSWORD
+      - uber_clone_back_DB_USERNAME
+      - uber_clone_back_REDIS_PASSWORD
+      - uber_clone_back_APP_URL
+      - uber_clone_back_APP_KEY
+      - uber_clone_back_REVERB_APP_SECRET
+      - uber_clone_back_REVERB_APP_KEY
+      - uber_clone_back_REVERB_APP_ID
+      - uber_clone_back_APP_DOMAIN
+    entrypoint: start-container
+    environment:
+      - APP_NAME=uber_clone_back
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "reverb:start"]
+      start_period: 10s
+    networks:
+      - uber_clone_back
+      - caddy_network
+  ##################################################
+  # VOLUMES
+  ##################################################
+volumes:
+  uber_clone_back_app_data:
+  uber_clone_back_app_config:
+  ##################################################
+  uber_clone_back_mysql_data:
+  uber_clone_back_redis_data:
+  ##################################################
+  uber_clone_back_horizon_data:
+  uber_clone_back_horizon_config:
+  ##################################################
+  uber_clone_back_reverb_data:
+  uber_clone_back_reverb_config:
+secrets:
+  uber_clone_back_DB_DATABASE:
+    external: true
+  uber_clone_back_DB_PASSWORD:
+    external: true
+  uber_clone_back_DB_USERNAME:
+    external: true
+  uber_clone_back_REDIS_PASSWORD:
+    external: true
+  uber_clone_back_APP_URL:
+    external: true
+  uber_clone_back_APP_KEY:
+    external: true
+  uber_clone_back_REVERB_APP_SECRET:
+    external: true
+  uber_clone_back_REVERB_APP_KEY:
+    external: true
+  uber_clone_back_REVERB_APP_ID:
+    external: true
+  uber_clone_back_APP_DOMAIN:
+    external: true
+networks:
+  uber_clone_back:
+    driver: overlay
+    attachable: true
+  caddy_network:
+    external: true

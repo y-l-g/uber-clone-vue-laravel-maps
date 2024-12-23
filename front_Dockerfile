@@ -1,0 +1,16 @@
+FROM caddy:2.9
+
+RUN set -eux; \
+    apt-get update \
+    && apt-get install -y --no-install-recommends\
+    nodejs \
+    npm \
+    && apt-get clean
+
+WORKDIR /app
+
+COPY front/package*.json ./
+
+RUN npm install
+
+COPY front/. .
