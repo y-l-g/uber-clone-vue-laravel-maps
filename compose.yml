@@ -203,6 +203,7 @@ secrets:
   uber_clone_MAIL_PASSWORD:
     external: true
   uber_clone_MAIL_FROM_ADDRESS:
+    external: true
 networks:
   uber_clone:
     driver: overlay
