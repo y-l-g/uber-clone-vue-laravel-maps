@@ -8,6 +8,7 @@ import TripView from '@/views/TripView.vue'
 import StandbyView from '@/views/StandbyView.vue'
 import DriverView from '@/views/DriverView.vue'
 import DrivingView from '@/views/DrivingView.vue'
+import http from "@/helpers/http";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,7 +70,7 @@ router.beforeEach((to, from) => {
 })
 
 const checkTokenAuthenticity = () => {
-    axios.get('http://ride-share.test/api/user', {
+    http().get('/api/user', {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         }
