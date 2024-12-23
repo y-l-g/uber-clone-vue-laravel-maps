@@ -1,11 +1,7 @@
 FROM caddy:2.9
 
-RUN set -eux; \
-    apt-get update \
-    && apt-get install -y --no-install-recommends\
-    nodejs \
-    npm \
-    && apt-get clean
+RUN apk update
+RUN apk add nodejs npm
 
 WORKDIR /app
 
