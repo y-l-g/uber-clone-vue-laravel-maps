@@ -41,7 +41,7 @@ services:
   # OCTANE:FRANKENPHP
   #################################################
   app:
-    image: ghcr.io/y-l-g/chat-laravel-inertia-primevue:main
+    image: ghcr.io/y-l-g/uber-clone-vue-laravel-maps-back:main
     volumes:
       - uber_clone_app_data:/data
       - uber_clone_app_config:/config
@@ -70,7 +70,7 @@ services:
   # REVERB
   ##################################################
   reverb:
-    image: ghcr.io/y-l-g/chat-laravel-inertia-primevue:main
+    image: ghcr.io/y-l-g/uber-clone-vue-laravel-maps-front:main
     volumes:
       - uber_clone_reverb_data:/data
       - uber_clone_reverb_config:/config
@@ -109,6 +109,7 @@ services:
       - uber_clone_APP_DOMAIN
     environment:
       - APP_NAME=uber_clone
+    entrypoint: start-container
     networks:
       - uber_clone
       - caddy_network
@@ -122,11 +123,11 @@ volumes:
   uber_clone_mysql_data:
   uber_clone_redis_data:
   ##################################################
-  uber_clone_horizon_data:
-  uber_clone_horizon_config:
-  ##################################################
   uber_clone_reverb_data:
   uber_clone_reverb_config:
+  ##################################################
+  uber_clone_frontend_data:
+  uber_clone_frontend_config:
 secrets:
   uber_clone_DB_DATABASE:
     external: true
