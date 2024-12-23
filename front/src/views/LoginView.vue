@@ -1,6 +1,5 @@
 <script setup>
 import { vMaska } from "maska/vue"
-import axios from "axios";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -18,7 +17,7 @@ onMounted(() => {
 })
 
 const handleLogin = () => {
-    axios.post('http://ride-share.test/api/login', {
+    http().post('/api/login', {
         phone: phone.value
     })
 
@@ -33,7 +32,7 @@ const handleLogin = () => {
 }
 
 const handleVerify = () => {
-    axios.post('http://ride-share.test/api/login/verify', {
+    http().post('/api/login/verify', {
         login_code: login_code.value,
         phone: phone.value
     })
