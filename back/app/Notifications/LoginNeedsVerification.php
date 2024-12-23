@@ -3,11 +3,8 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\Twilio\TwilioChannel;
-use NotificationChannels\Twilio\TwilioSmsMessage;
 
 class LoginNeedsVerification extends Notification
 {
@@ -28,10 +25,10 @@ class LoginNeedsVerification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return [TwilioChannel::class];
+        return ['mail'];
     }
 
-    public function toTwilio($notifiable)
+    public function toMail($notifiable)
     {
         $loginCode = rand(111111, 999999);
 
@@ -39,8 +36,11 @@ class LoginNeedsVerification extends Notification
             'login_code' => $loginCode
         ]);
 
-        return (new TwilioSmsMessage())
-            ->content("Your Andrewber login code is {$loginCode}, don't share this with anyone");
+        return (new MailMessage)
+            ->subject('Code de connexion')
+            ->line("Votre code de connexion est : {$loginCode}")
+            ->line("Ne partagez ce code avec personne.");
+
     }
 
     /**

@@ -6,7 +6,7 @@ import http from "@/helpers/http";
 
 const router = useRouter();
 
-const phone = ref(null)
+const email = ref(null)
 const login_code = ref(null)
 const waitingOnVerification = ref(false)
 
@@ -20,7 +20,7 @@ onMounted(() => {
 
 const handleLogin = () => {
     http().post('/api/login', {
-        phone: phone.value
+        email: email.value
     })
 
         .then((response) => {
@@ -36,7 +36,7 @@ const handleLogin = () => {
 const handleVerify = () => {
     http().post('/api/login/verify', {
         login_code: login_code.value,
-        phone: phone.value
+        email: email.value
     })
         .then((response) => {
             console.log(response.data)
@@ -55,7 +55,7 @@ const handleVerify = () => {
     <div>
         <div v-if="!waitingOnVerification">
             <h1>
-                Enter your phone number
+                Enter your Email
             </h1>
 
             <form
@@ -63,13 +63,11 @@ const handleVerify = () => {
                 @submit.prevent="handleLogin"
             >
                 <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    placeholder="336595959"
-                    v-maska
-                    data-maska="###########"
-                    v-model="phone"
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="your@email.com"
+                    v-model="email"
                 >
                 <button
                     type="submit"

@@ -62,9 +62,10 @@ services:
       - uber_clone_REVERB_APP_KEY
       - uber_clone_REVERB_APP_ID
       - uber_clone_APP_DOMAIN
-      - uber_clone_TWILIO_DEBUG_TO
-      - uber_clone_TWILIO_AUTH_TOKEN
-      - uber_clone_TWILIO_ACCOUNT_SID
+      - uber_clone_MAIL_HOST
+      - uber_clone_MAIL_USERNAME
+      - uber_clone_MAIL_PASSWORD
+      - uber_clone_MAIL_FROM_ADDRESS
     entrypoint: start-container
     networks:
       - uber_clone
@@ -89,9 +90,10 @@ services:
       - uber_clone_REVERB_APP_KEY
       - uber_clone_REVERB_APP_ID
       - uber_clone_APP_DOMAIN
-      - uber_clone_TWILIO_DEBUG_TO
-      - uber_clone_TWILIO_AUTH_TOKEN
-      - uber_clone_TWILIO_ACCOUNT_SID
+      - uber_clone_MAIL_HOST
+      - uber_clone_MAIL_USERNAME
+      - uber_clone_MAIL_PASSWORD
+      - uber_clone_MAIL_FROM_ADDRESS
     entrypoint: start-container
     environment:
       - APP_NAME=uber_clone
@@ -122,6 +124,37 @@ services:
       - uber_clone
       - caddy_network
   ##################################################
+  # HORIZON
+  ##################################################
+  horizon:
+    image: ghcr.io/y-l-g/uber-clone-vue-laravel-map-back:main
+    volumes:
+      - uber_clone_horizon_data:/data
+      - uber_clone_horizon_config:/config
+    command: ["php", "artisan", "horizon"]
+    healthcheck:
+      test: ["CMD", "php", "artisan", "horizon:status"]
+    secrets:
+      - uber_clone_DB_DATABASE
+      - uber_clone_DB_PASSWORD
+      - uber_clone_DB_USERNAME
+      - uber_clone_REDIS_PASSWORD
+      - uber_clone_APP_URL
+      - uber_clone_APP_KEY
+      - uber_clone_REVERB_APP_SECRET
+      - uber_clone_REVERB_APP_KEY
+      - uber_clone_REVERB_APP_ID
+      - uber_clone_APP_DOMAIN
+      - uber_clone_MAIL_HOST
+      - uber_clone_MAIL_USERNAME
+      - uber_clone_MAIL_PASSWORD
+      - uber_clone_MAIL_FROM_ADDRESS
+    entrypoint: start-container
+    environment:
+      - APP_NAME=uber_clone
+    networks:
+      - uber_clone
+  ##################################################
   # VOLUMES
   ##################################################
 volumes:
@@ -136,6 +169,10 @@ volumes:
   ##################################################
   uber_clone_frontend_data:
   uber_clone_frontend_config:
+  ##################################################
+  uber_clone_horizon_data:
+  uber_clone_horizon_config:
+  ##################################################
 secrets:
   uber_clone_DB_DATABASE:
     external: true
@@ -157,14 +194,15 @@ secrets:
     external: true
   uber_clone_APP_DOMAIN:
     external: true
-  uber_clone_TWILIO_DEBUG_TO:
-    external: true
-  uber_clone_TWILIO_AUTH_TOKEN:
-    external: true
-  uber_clone_TWILIO_ACCOUNT_SID:
-    external: true
   uber_clone_VITE_APP_GOOGLE_MAPS_API_KEY:
     external: true
+  uber_clone_MAIL_HOST:
+    external: true
+  uber_clone_MAIL_USERNAME:
+    external: true
+  uber_clone_MAIL_PASSWORD:
+    external: true
+  uber_clone_MAIL_FROM_ADDRESS:
 networks:
   uber_clone:
     driver: overlay

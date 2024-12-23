@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel-notification-channels/twilio": "^3.4",
         "laravel/framework": "^11.9",
         "laravel/octane": "^2.6",
         "laravel/reverb": "^1.0",

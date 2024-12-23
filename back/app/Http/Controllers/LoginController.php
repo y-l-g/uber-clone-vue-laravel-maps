@@ -12,30 +12,30 @@ class LoginController extends Controller
     public function submit(Request $request)
     {
         $request->validate([
-            'phone' => 'required|numeric|min:10'
+            'email' => 'required|email'
         ]);
 
         $user = User::firstOrCreate([
-            'phone' => $request->phone
+            'email' => $request->email
         ]);
 
         if (!$user)
-            return response()->json(['message' => 'Could not process a user with that phone number'], 401);
+            return response()->json(['message' => 'Could not process a user with that email'], 401);
 
         $user->notify(new LoginNeedsVerification());
 
-        return response()->json(['message' => 'Text Message notification sent']);
+        return response()->json(['message' => 'Email notification sent']);
     }
 
     public function verify(Request $request)
     {
         $request->validate([
             'login_code' => 'required|numeric|between:111111,999999',
-            'phone' => 'required|string|min:10'
+            'email' => 'required|email'
         ]);
 
         $user = User::where([
-            'phone' => $request->phone,
+            'email' => $request->email,
             'login_code' => $request->login_code
         ])->first();
 

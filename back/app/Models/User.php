@@ -24,7 +24,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone',
         'login_code',
     ];
 
@@ -38,11 +37,6 @@ class User extends Authenticatable
         'login_code',
     ];
 
-
-    public function routeNotificationForTwilio()
-    {
-        return $this->phone;
-    }
     public function driver(): HasOne
     {
         return $this->hasOne(related: Driver::class);
