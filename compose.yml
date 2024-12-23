@@ -62,6 +62,9 @@ services:
       - uber_clone_REVERB_APP_KEY
       - uber_clone_REVERB_APP_ID
       - uber_clone_APP_DOMAIN
+      - uber_clone_TWILIO_DEBUG_TO
+      - uber_clone_TWILIO_AUTH_TOKEN
+      - uber_clone_TWILIO_ACCOUNT_SID
     entrypoint: start-container
     networks:
       - uber_clone
