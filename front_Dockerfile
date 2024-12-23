@@ -23,8 +23,11 @@ RUN npm install
 
 COPY front/. .
 
-RUN chmod -R 775 {/data, /config}
+RUN chmod -R 775 /data
+RUN chmod -R 775 /config
 
-RUN chown -R ${USER}:${USER} {/app, /data, /config}
+RUN chown -R ${USER}:${USER} /app
+RUN chown -R ${USER}:${USER} /data
+RUN chown -R ${USER}:${USER} /config
 
 USER ${USER}
