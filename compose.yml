@@ -66,12 +66,11 @@ services:
     networks:
       - uber_clone_back
       - caddy_network
-    ##################################################
+  ##################################################
   # REVERB
   ##################################################
   reverb:
     image: ghcr.io/y-l-g/chat-laravel-inertia-primevue:main
-    restart: always
     volumes:
       - uber_clone_back_reverb_data:/data
       - uber_clone_back_reverb_config:/config
@@ -93,6 +92,30 @@ services:
     healthcheck:
       test: ["CMD", "pgrep", "-f", "reverb:start"]
       start_period: 10s
+    networks:
+      - uber_clone_back
+      - caddy_network
+  ##################################################
+  # Frontend
+  ##################################################
+  frontend:
+    image: ghcr.io/y-l-g/chat-laravel-inertia-primevue:main
+    volumes:
+      - uber_clone_back_frontend_data:/data
+      - uber_clone_back_frontend_config:/config
+    secrets:
+      - uber_clone_back_DB_DATABASE
+      - uber_clone_back_DB_PASSWORD
+      - uber_clone_back_DB_USERNAME
+      - uber_clone_back_REDIS_PASSWORD
+      - uber_clone_back_APP_URL
+      - uber_clone_back_APP_KEY
+      - uber_clone_back_REVERB_APP_SECRET
+      - uber_clone_back_REVERB_APP_KEY
+      - uber_clone_back_REVERB_APP_ID
+      - uber_clone_back_APP_DOMAIN
+    environment:
+      - APP_NAME=uber_clone_back
     networks:
       - uber_clone_back
       - caddy_network
