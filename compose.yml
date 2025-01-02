@@ -1,43 +1,5 @@
 services:
   #################################################
-  # DB (MySQL)
-  #################################################
-  db:
-    image: "mysql:8.0"
-    volumes:
-      - uber_clone_mysql_data:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE_FILE: /run/secrets/uber_clone_DB_DATABASE
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/uber_clone_DB_PASSWORD
-      MYSQL_PASSWORD_FILE: /run/secrets/uber_clone_DB_PASSWORD
-      MYSQL_USER_FILE: /run/secrets/uber_clone_DB_USERNAME
-    secrets:
-      - uber_clone_DB_DATABASE
-      - uber_clone_DB_PASSWORD
-      - uber_clone_DB_USERNAME
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      start_period: 20s
-    networks:
-      - uber_clone
-  ##################################################
-  # REDIS
-  ##################################################
-  redis:
-    image: "redis:7.4"
-    volumes:
-      - "uber_clone_redis_data:/data"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      start_period: 20s
-    environment:
-      - REDIS_PASSWORD_FILE=/run/secrets/uber_clone_REDIS_PASSWORD
-    secrets:
-      - uber_clone_REDIS_PASSWORD
-    command: sh -c 'redis-server --appendonly yes --requirepass $$(cat /run/secrets/uber_clone_REDIS_PASSWORD | tr -d " \t\n\r")'
-    networks:
-      - uber_clone
-  #################################################
   # OCTANE:FRANKENPHP
   #################################################
   app:
@@ -52,9 +14,7 @@ services:
     environment:
       - APP_NAME=uber_clone
     secrets:
-      - uber_clone_DB_DATABASE
       - uber_clone_DB_PASSWORD
-      - uber_clone_DB_USERNAME
       - uber_clone_REDIS_PASSWORD
       - uber_clone_APP_URL
       - uber_clone_APP_KEY
@@ -69,7 +29,6 @@ services:
     entrypoint: start-container
     networks:
       - uber_clone
-      - caddy_network
   ##################################################
   # REVERB
   ##################################################
@@ -80,9 +39,7 @@ services:
       - uber_clone_reverb_config:/config
     command: ["php", "artisan", "reverb:start", "--debug"]
     secrets:
-      - uber_clone_DB_DATABASE
       - uber_clone_DB_PASSWORD
-      - uber_clone_DB_USERNAME
       - uber_clone_REDIS_PASSWORD
       - uber_clone_APP_URL
       - uber_clone_APP_KEY
@@ -102,7 +59,6 @@ services:
       start_period: 10s
     networks:
       - uber_clone
-      - caddy_network
   ##################################################
   # Frontend
   ##################################################
@@ -122,7 +78,6 @@ services:
     command: sh -c 'caddy run --config /etc/caddy/Caddyfile --adapter caddyfile'
     networks:
       - uber_clone
-      - caddy_network
   ##################################################
   # HORIZON
   ##################################################
@@ -135,9 +90,7 @@ services:
     healthcheck:
       test: ["CMD", "php", "artisan", "horizon:status"]
     secrets:
-      - uber_clone_DB_DATABASE
       - uber_clone_DB_PASSWORD
-      - uber_clone_DB_USERNAME
       - uber_clone_REDIS_PASSWORD
       - uber_clone_APP_URL
       - uber_clone_APP_KEY
@@ -161,9 +114,6 @@ volumes:
   uber_clone_app_data:
   uber_clone_app_config:
   ##################################################
-  uber_clone_mysql_data:
-  uber_clone_redis_data:
-  ##################################################
   uber_clone_reverb_data:
   uber_clone_reverb_config:
   ##################################################
@@ -174,11 +124,7 @@ volumes:
   uber_clone_horizon_config:
   ##################################################
 secrets:
-  uber_clone_DB_DATABASE:
-    external: true
   uber_clone_DB_PASSWORD:
-    external: true
-  uber_clone_DB_USERNAME:
     external: true
   uber_clone_REDIS_PASSWORD:
     external: true
@@ -206,7 +152,4 @@ secrets:
     external: true
 networks:
   uber_clone:
-    driver: overlay
-    attachable: true
-  caddy_network:
     external: true

@@ -51,6 +51,7 @@ onMounted(async () => {
                 };
             })
         }
+
     await location.updateCurrentLocation()
     const echo = new Echo({
         broadcaster: 'reverb',
